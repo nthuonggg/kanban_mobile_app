@@ -52,10 +52,10 @@ class _StatsContent extends StatelessWidget {
             const Text(
               'Hoạt động',
               style: TextStyle(
-                fontSize: 40,
+                fontSize: 28,
                 fontWeight: FontWeight.w900,
-                letterSpacing: -1.2,
-                height: 1.05,
+                letterSpacing: -0.6,
+                height: 1.1,
                 color: GlassPalette.onSurface,
               ),
             ),
@@ -147,8 +147,8 @@ class _StatsContent extends StatelessWidget {
                 const SizedBox(height: 24),
                 Center(
                   child: SizedBox(
-                    width: 200,
-                    height: 200,
+                    width: 170,
+                    height: 170,
                     child: CustomPaint(
                       painter: _RingPainter(percent),
                       child: Center(

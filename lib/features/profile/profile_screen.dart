@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final isGuest = AppState.instance.type == SessionType.guest;
     final user = Supabase.instance.client.auth.currentUser;
-    final email = isGuest ? 'Phiên làm việc cục bộ' : (user?.email ?? '—');
+    final email = isGuest ? 'Chưa đăng nhập' : (user?.email ?? '—');
     final initial = email.isNotEmpty ? email[0].toUpperCase() : '';
 
     return Scaffold(
@@ -57,18 +57,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const Text(
                 'Hồ sơ',
                 style: TextStyle(
-                  fontSize: 40,
+                  fontSize: 28,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: -1.2,
-                  height: 1.05,
+                  letterSpacing: -0.6,
+                  height: 1.1,
                   color: GlassPalette.onSurface,
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
               Center(
                 child: Container(
-                  width: 108,
-                  height: 108,
+                  width: 88,
+                  height: 88,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
@@ -92,13 +92,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? const Icon(
                           Icons.person,
                           color: Colors.white,
-                          size: 56,
+                          size: 44,
                         )
                       : Text(
                           initial,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 44,
+                            fontSize: 36,
                             fontWeight: FontWeight.w900,
                           ),
                         ),

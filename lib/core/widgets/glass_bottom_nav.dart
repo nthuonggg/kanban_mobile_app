@@ -49,9 +49,16 @@ class GlassBottomNav extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withValues(alpha: 0.22),
+                    blurRadius: 32,
+                    offset: const Offset(0, 14),
+                    spreadRadius: -4,
+                  ),
+                  BoxShadow(
+                    color: GlassPalette.primary.withValues(alpha: 0.1),
                     blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    offset: const Offset(0, 4),
+                    spreadRadius: -2,
                   ),
                 ],
               ),
@@ -145,13 +152,14 @@ class _NavSlot extends StatelessWidget {
               color: GlassPalette.onSurfaceVariant,
               size: 22,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 3),
             Text(
-              item.label.toUpperCase(),
+              item.label,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 9.5,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.8,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.1,
                 color: GlassPalette.onSurfaceVariant,
               ),
             ),

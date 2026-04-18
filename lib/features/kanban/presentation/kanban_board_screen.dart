@@ -7,6 +7,7 @@ import '../../../core/app_state.dart';
 import '../../../core/widgets/glass.dart';
 import '../domain/models/task_model.dart';
 import 'providers/task_provider.dart';
+import 'widgets/attachment_list.dart';
 
 class KanbanBoardScreen extends ConsumerStatefulWidget {
   const KanbanBoardScreen({super.key});
@@ -92,36 +93,15 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 18),
-                  const Text(
-                    'CÔNG VIỆC MỚI',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.4,
-                      color: GlassPalette.outlineVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  ShaderMask(
-                    shaderCallback: (rect) => const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        GlassPalette.onSurface,
-                        GlassPalette.primary,
-                        GlassPalette.primaryContainer,
-                      ],
-                    ).createShader(rect),
-                    child: Text(
-                      isEdit ? 'Cập nhật\ncông việc.' : 'Bạn muốn\nlàm gì tiếp?',
-                      style: const TextStyle(
-                        fontSize: 34,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.2,
-                        height: 1.05,
-                        color: Colors.white,
-                      ),
+                  const SizedBox(height: 16),
+                  Text(
+                    isEdit ? 'Sửa công việc' : 'Thêm công việc',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.6,
+                      height: 1.15,
+                      color: GlassPalette.onSurface,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -199,6 +179,38 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
                     value: selectedDueDate,
                     onChanged: (d) => setModalState(() => selectedDueDate = d),
                   ),
+                  if (isEdit) ...[
+                    const SizedBox(height: 18),
+                    AttachmentList(taskId: existing.id),
+                  ] else ...[
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: GlassPalette.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 16,
+                            color: GlassPalette.onSurfaceVariant,
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Lưu công việc xong, mở lại để đính kèm tệp.',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: GlassPalette.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 24),
                   GlassButton(
                     primary: true,
@@ -322,15 +334,19 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
     );
   }
 
-  Widget _priorityChip({required String label, required TaskPriority? value}) {
+  Widget _priorityChip({
+    required String label,
+    required TaskPriority? value,
+    bool isLast = false,
+  }) {
     final selected = _priorityFilter == value;
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: EdgeInsets.only(right: isLast ? 0 : 8),
       child: GestureDetector(
         onTap: () => setState(() => _priorityFilter = value),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
             color: selected
                 ? GlassPalette.primary
@@ -379,7 +395,7 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
           children: [
             // Top row: avatar + pill search button (style Aéro Vitrum)
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 12, 4),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
               child: Row(
                 children: [
                   Container(
@@ -413,11 +429,7 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
                           ),
                   ),
                   const Spacer(),
-                  _HeaderIconBtn(
-                    icon: isGuest ? Icons.smartphone : Icons.cloud_done,
-                    tint: isGuest ? Colors.orange[700]! : Colors.green[700]!,
-                    onPressed: null,
-                  ),
+                  _ModeChip(isGuest: isGuest),
                   const SizedBox(width: 8),
                   _SortMenuBtn(
                     current: _sort,
@@ -428,25 +440,25 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
             ),
             // Display title
             const Padding(
-              padding: EdgeInsets.fromLTRB(20, 8, 20, 6),
+              padding: EdgeInsets.fromLTRB(20, 4, 20, 4),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Bảng công việc',
                   style: TextStyle(
-                    fontSize: 38,
+                    fontSize: 28,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: -1.3,
-                    height: 1.05,
+                    letterSpacing: -0.6,
+                    height: 1.1,
                     color: GlassPalette.onSurface,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             // Search pill
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
@@ -484,17 +496,16 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
                 onChanged: (v) => setState(() => _searchQuery = v),
               ),
             ),
-            // Priority filter chips
-            SizedBox(
-              height: 44,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+            // Priority filter chips — căn giữa
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _priorityChip(label: 'Tất cả', value: null),
                   _priorityChip(label: 'THẤP', value: TaskPriority.low),
                   _priorityChip(label: 'VỪA', value: TaskPriority.medium),
-                  _priorityChip(label: 'CAO', value: TaskPriority.high),
+                  _priorityChip(label: 'CAO', value: TaskPriority.high, isLast: true),
                 ],
               ),
             ),
@@ -548,7 +559,7 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 72),
+        padding: const EdgeInsets.only(bottom: 96),
         child: FloatingActionButton.extended(
           onPressed: () => _showTaskSheet(),
           icon: const Icon(Icons.add),
@@ -559,37 +570,43 @@ class _KanbanBoardScreenState extends ConsumerState<KanbanBoardScreen>
   }
 }
 
-/// Nút icon kính mờ cho header row.
-class _HeaderIconBtn extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final Color tint;
-
-  const _HeaderIconBtn({
-    required this.icon,
-    required this.onPressed,
-    required this.tint,
-  });
+/// Pill badge hiển thị trạng thái mode (cloud/local) — không bấm được.
+class _ModeChip extends StatelessWidget {
+  final bool isGuest;
+  const _ModeChip({required this.isGuest});
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
+    final tint = isGuest ? Colors.orange[700]! : Colors.green[700]!;
+    final bg = isGuest ? const Color(0xFFFFF3E0) : const Color(0xFFE8F5E9);
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: bg,
         borderRadius: BorderRadius.circular(999),
-        onTap: onPressed,
-        child: Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.8),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: GlassPalette.outlineVariant.withValues(alpha: 0.3),
+        border: Border.all(color: tint.withValues(alpha: 0.35)),
+      ),
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isGuest ? Icons.smartphone : Icons.cloud_done,
+            size: 14,
+            color: tint,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            isGuest ? 'Cục bộ' : 'Cloud',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.2,
+              color: tint,
             ),
           ),
-          child: Icon(icon, size: 20, color: tint),
-        ),
+        ],
       ),
     );
   }
@@ -624,7 +641,9 @@ class _TaskColumn extends ConsumerWidget {
           if (priorityFilter != null && t.priority != priorityFilter) {
             return false;
           }
-          if (query.isNotEmpty && !t.title.toLowerCase().contains(query)) {
+          if (query.isNotEmpty &&
+              !t.title.toLowerCase().contains(query) &&
+              !t.description.toLowerCase().contains(query)) {
             return false;
           }
           return true;
@@ -639,17 +658,27 @@ class _TaskColumn extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.inbox_outlined,
-                  size: 56,
-                  color: Colors.white.withValues(alpha: 0.5),
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: GlassPalette.primaryContainer
+                        .withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.inbox_outlined,
+                    size: 36,
+                    color: GlassPalette.primary,
+                  ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 Text(
                   emptyText,
                   style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: GlassPalette.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -658,7 +687,7 @@ class _TaskColumn extends ConsumerWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 160),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 200),
           itemCount: columnTasks.length,
           itemBuilder: (context, index) {
             final task = columnTasks[index];
@@ -946,6 +975,7 @@ class _TaskCard extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
+                _AttachmentCountBadge(taskId: task.id),
                 if (task.dueDate != null) ...[
                   const SizedBox(height: 10),
                   _DueDateBadge(
@@ -956,23 +986,16 @@ class _TaskCard extends ConsumerWidget {
               ],
             ),
           ),
-          // Dải màu bên trái (category glow) — bắt chước mock Aéro Vitrum.
+          // Dải màu bên trái — đủ nhận diện, bớt glow cho đỡ rối
           Positioned(
             left: 0,
-            top: 12,
-            bottom: 12,
+            top: 14,
+            bottom: 14,
             child: Container(
               width: 4,
               decoration: BoxDecoration(
                 color: pColor,
                 borderRadius: BorderRadius.circular(4),
-                boxShadow: [
-                  BoxShadow(
-                    color: pColor.withValues(alpha: 0.5),
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                  ),
-                ],
               ),
             ),
           ),
@@ -984,11 +1007,11 @@ class _TaskCard extends ConsumerWidget {
   static String _priorityTagText(TaskPriority p) {
     switch (p) {
       case TaskPriority.low:
-        return 'ƯU TIÊN THẤP';
+        return 'THẤP';
       case TaskPriority.medium:
-        return 'ƯU TIÊN VỪA';
+        return 'VỪA';
       case TaskPriority.high:
-        return 'ƯU TIÊN CAO';
+        return 'CAO';
     }
   }
 }
@@ -1257,6 +1280,51 @@ class _DragFeedback extends StatelessWidget {
               Icon(Icons.drag_indicator, color: color, size: 20),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Badge nhỏ hiển thị "📎 N" tệp đính kèm trên TaskCard.
+class _AttachmentCountBadge extends ConsumerWidget {
+  final String taskId;
+  const _AttachmentCountBadge({required this.taskId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncList = ref.watch(taskAttachmentsProvider(taskId));
+    final count = asyncList.maybeWhen(
+      data: (list) => list.length,
+      orElse: () => 0,
+    );
+    if (count == 0) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: GlassPalette.primaryContainer.withValues(alpha: 0.18),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.attach_file,
+              size: 12,
+              color: GlassPalette.primary,
+            ),
+            const SizedBox(width: 3),
+            Text(
+              '$count tệp',
+              style: const TextStyle(
+                color: GlassPalette.primary,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
       ),
     );
