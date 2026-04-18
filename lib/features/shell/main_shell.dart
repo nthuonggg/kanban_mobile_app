@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/notification_service.dart';
 import '../../core/widgets/glass_bottom_nav.dart';
+import '../kanban/domain/models/task_model.dart';
 import '../kanban/presentation/kanban_board_screen.dart';
+import '../kanban/presentation/providers/task_provider.dart';
 import '../profile/profile_screen.dart';
 import '../stats/stats_screen.dart';
 
-class MainShell extends StatefulWidget {
+class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
 
   @override
-  State<MainShell> createState() => _MainShellState();
+  ConsumerState<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends ConsumerState<MainShell> {
   int _index = 0;
 
   static const _pages = [
@@ -41,6 +45,11 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    // Mỗi khi danh sách task đổi → đồng bộ lại lịch nhắc.
+    ref.listen<AsyncValue<List<TaskModel>>>(tasksStreamProvider, (_, next) {
+      next.whenData((tasks) => NotificationService.syncFromTasks(tasks));
+    });
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(

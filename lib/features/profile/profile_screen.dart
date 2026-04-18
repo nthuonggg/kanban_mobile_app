@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/app_state.dart';
+import '../../core/notification_service.dart';
 import '../../core/widgets/glass.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -157,6 +158,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.zero,
                 child: Column(
                   children: [
+                    _ActionRow(
+                      icon: Icons.notifications_active_outlined,
+                      label: 'Gửi thông báo thử',
+                      onTap: () async {
+                        await NotificationService.showNow(
+                          title: 'Kanban Cá Nhân',
+                          body:
+                              'Thông báo hoạt động bình thường. Lịch nhắc hạn '
+                              'task sẽ tự đẩy đúng thời điểm.',
+                        );
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Đã gửi thông báo thử'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      },
+                    ),
+                    const _Divider(),
                     _ActionRow(
                       icon: Icons.info_outline,
                       label: 'Về Kanban Cá Nhân',

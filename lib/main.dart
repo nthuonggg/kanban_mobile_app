@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/app_state.dart';
 import 'core/constants/supabase_constants.dart';
+import 'core/notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/glass.dart';
 import 'features/auth/presentation/login_screen.dart';
@@ -33,6 +34,7 @@ Future<void> main() async {
   );
 
   await AppState.instance.init();
+  await NotificationService.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }
